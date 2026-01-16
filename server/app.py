@@ -57,17 +57,14 @@ class RestaurantPizzasResource(Resource):
             if not data:
                 return {'errors': ['validation errors']}, 400
                 
-            # Validate required fields
             required_fields = ['price', 'pizza_id', 'restaurant_id']
             if not all(field in data for field in required_fields):
                 return {'errors': ['validation errors']}, 400
             
-            # Validate price before creating object
             price = data.get('price')
             if price is None or not (1 <= price <= 30):
                 return {'errors': ['validation errors']}, 400
             
-            # Create new RestaurantPizza - will also trigger validation
             restaurant_pizza = RestaurantPizza(
                 price=price,
                 pizza_id=data['pizza_id'],
@@ -77,12 +74,10 @@ class RestaurantPizzasResource(Resource):
             db.session.add(restaurant_pizza)
             db.session.commit()
             
-            # Return the created RestaurantPizza with nested data
             return restaurant_pizza.to_dict(), 201
             
         except Exception as e:
             db.session.rollback()
-            # Return generic validation error for any exception
             return {'errors': ['validation errors']}, 400
 
 api.add_resource(Restaurants, '/restaurants')
